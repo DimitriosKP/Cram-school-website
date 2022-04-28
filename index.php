@@ -11,8 +11,8 @@
 
     $pageTitle = 'HomeWork';
     require_once '_header.php';
-
 ?>
+
     <body>
         <?php
             $currentPage='index';
