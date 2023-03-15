@@ -1,6 +1,6 @@
 <!-------FOOTER--------->
 <section class="footer">
-    <h1>Επικοινωνήστε μαζί μας!</h1>
+    <h1>Contact with us!</h1>
 
     <div class="wrapper">
         <div class="button">
@@ -30,7 +30,7 @@
     </div>
     <br><br>
     <hr>
-    <p><i class="fa fa-copyright"><?php echo "Copyrights Dimitrios Peftitsis 2021 - ", date("Y");?></i></p>
+    <p><i class="fa fa-copyright"><?php echo "Copyrights Dimitrios Peftitsis ", date("Y");?></i></p>
 </section>    
 
 <a href="#" class="topBtn"><i class="fas fa-chevron-up"></i></a>

@@ -10,7 +10,7 @@
         exit;
     }
 
-    $pageTitle = 'HomeWork - Ανακοινώσεις';
+    $pageTitle = 'HomeWork - Announcements';
     require_once '_header.php';
 ?>
 
@@ -21,7 +21,7 @@
         ?>
 
         <div class="text-box">
-            <h1>Ανακοινώσεις</h1>
+            <h1>Announcements</h1>
         </div>
         
         <section class="announcements">
@@ -47,8 +47,8 @@
                                 <img src="images/ann.png" alt="Document">
                                 <div>
                                     <h1><?php echo  $row['ann_title'] ?></h1><br>
-                                    <h4><?php echo 'Συντάκτης: ', $row['username']?></h4>
-                                    <h4><?php echo 'Η ανακοίνωση αναρτήθηκε στις: ', $row['ann_uploaded_on'] ?></h4>
+                                    <h4><?php echo 'Author: ', $row['username']?></h4>
+                                    <h4><?php echo 'The announcement was posted on: ', $row['ann_uploaded_on'] ?></h4>
                                     <h4><?php echo 'Announcement ID: ', $row['ann_id'] ?></h4>	
                                     <h3><?php echo  $row['ann_text']?></h3>
                                 

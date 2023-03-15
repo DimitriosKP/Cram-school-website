@@ -12,20 +12,16 @@
 ?>
 
     <body>
-        <?php
-            $currentPage='students';
-            require_once '_menu.php';
-        ?>
+        <?php $currentPage='students';
+            require_once '_menu.php'; ?>
 
         <div class="text-box">
-            <h1>Εγγεγραμμένοι φοιτητές</h1>
+            <h1>Students</h1>
         </div>
 
         <section class="announcements">
             <div class="cards-area" id="announcements-section">
-            <button name="add" onclick="location.href='users_add.php'" >
-                <i class="fa fa-plus" aria-hidden="true"></i> Add
-            </button>
+            <button name="add" onclick="location.href='users_add.php'"><i class="fa fa-plus" aria-hidden="true"></i>Add</button>
             <?php
                 $sql = "SELECT * FROM users WHERE role = 's'";
                 if($result = mysqli_query($database, $sql)){
@@ -33,7 +29,7 @@
                         while($row = mysqli_fetch_array($result)){ ?>
 
                             <div class="announcements-col">
-                            <img src="student.png" alt="student">
+                            <img src="images/student.png" alt="student">
                                 <div>
                                         <h4 style='display:inline;'><?php echo 'username:  '?></h4><h1 style='display:inline;'><?php echo $row['username'] ?></h1><br><br>	
                                         <h4><?php echo 'student ID: ', $row['id'] ?></h4>

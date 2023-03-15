@@ -5,36 +5,34 @@
             <i class="fa fa-times" onclick="hideMenu()"></i>
             <ul>
                 <li>
-                    <a href="index.php" <?=(($currentPage??'') == 'index' ? 'style="font-weight:bold"' : '');?>>Αρχική Σελίδα</a>
+                    <a href="index.php" <?=(($currentPage??'') == 'index' ? 'style="font-weight:bold"' : '');?>>Home</a>
                 </li>
 
                 <li>
-                    <a href="announcements.php" <?=(($currentPage??'') == 'announcements' ? 'style="font-weight:bold"' : '');?>>Ανακοινώσεις</a>
+                    <a href="announcements.php" <?=(($currentPage??'') == 'announcements' ? 'style="font-weight:bold"' : '');?>>Announcements</a>
                 </li>
 
                 <li>
-                    <a href="communication.php" <?=(($currentPage??'') == 'communication' ? 'style="font-weight:bold"' : '');?>>Επικοινωνία</a>
+                    <a href="communication.php" <?=(($currentPage??'') == 'communication' ? 'style="font-weight:bold"' : '');?>>Contact</a>
                 </li>
 
                 <li>
-                    <a href="documents.php" <?=(($currentPage??'') == 'documents' ? 'style="font-weight:bold"' : '');?>>Έγγραφα μαθήματος</a>
+                    <a href="documents.php" <?=(($currentPage??'') == 'documents' ? 'style="font-weight:bold"' : '');?>>Files</a>
                 </li>
 
                 <li>
-                    <a href="homework.php" <?=(($currentPage??'') == 'homework' ? 'style="font-weight:bold"' : '');?>>Εργασίες</a>
+                    <a href="homework.php" <?=(($currentPage??'') == 'homework' ? 'style="font-weight:bold"' : '');?>>Homeworks</a>
                 </li>
 
                 <?php if($_SESSION["role"] == 't'):?>
                     <li style="text-align: center;">
-                        <a href="students.php" <?=(($currentPage??'') == 'students' ? 'style="font-weight:bold"' : '');?>>Φοιτητές</a>
+                        <a href="students.php" <?=(($currentPage??'') == 'students' ? 'style="font-weight:bold"' : '');?>>Students</a>
                     </li>  
                 <?php endif ?>  
 
                 <li>
-                    <?php echo "<h3>Καλώς ήρθες " . $_SESSION['username'] . "</h3>"; ?>
-                    <?php if ($_SESSION['role'] == 's')?> <?php echo "<h3>Φοιτητής</h3>"?>
-                    
-                    <a href="logout.php">Αποσύνδεση</a>
+                    <?php echo "<h3>Welcome " . $_SESSION['username'] . "</h3>"; ?>
+                    <a href="logout.php">Log-out</a>
                 </li>
             </ul>
         </div>

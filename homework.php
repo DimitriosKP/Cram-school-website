@@ -20,7 +20,7 @@
         ?>
 
         <div class="text-box">
-            <h1>Εργασίες</h1>
+            <h1>Homeworks</h1>
         </div>
 
         <div class="container">
@@ -46,10 +46,10 @@
                             <img src="images/pencil.png" alt="Document">
                             <div>
                                 <h1><?php echo  $row['file_name'] ?></h1><br>
-                                <h4><?php echo 'Το αρχείο αναρτήθηκε από: ', $row['username'] ?></h4>
-                                <h4><?php echo 'Το αρχείο αναρτήθηκε στις: ', $row['file_uploaded_on'] ?></h4>
+                                <h4><?php echo 'The announcement was posted from:  ', $row['username'] ?></h4>
+                                <h4><?php echo 'The announcement was posted on: ', $row['file_uploaded_on'] ?></h4>
                                 <h4><?php echo 'File ID: ', $row['file_id'] ?></h4>
-                                <h3 style='display: inline-block;'><?php echo 'Περιγραφή: '?></h3><h2 style='display: inline-block;'><?php echo $row['file_description']?></h2><br>
+                                <h3 style='display: inline-block;'><?php echo 'Description: '?></h3><h2 style='display: inline-block;'><?php echo $row['file_description']?></h2><br>
                                 <p><?php echo "Type of file: ", $row['file_type'] ?></p>
                                
                                 <?php if($_SESSION["role"] == 't' && $_SESSION['id'] == $row['creator_id']):   ?>

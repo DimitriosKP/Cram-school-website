@@ -44,7 +44,7 @@
         }
     }
     
-    $pageTitle = 'HomeWork - Επικοινωνία';
+    $pageTitle = 'HomeWork - Contact';
     require_once '_header.php';
 ?>
 
@@ -60,12 +60,12 @@
                 <div class="card">
                     <div class="inner-box" id="card">
                         <div class="card-front">
-                            <h2>Αποστολή e-mail μέσω web φόρμας</h2>
+                            <h2>Send from web form</h2>
 
                             <form action="email.php" method="POST">
-                                <input type="subject" name='subject' class="input-box" placeholder="Θέμα" required/>
-                                <textarea type="message" name='message' class="input-box" placeholder="Μήνυμα" required></textarea>
-                                <button type="submit" name='submit' class="submit-btn">Αποστολή</button>
+                                <input type="subject" name='subject' class="input-box" placeholder="Subject" required/>
+                                <textarea type="message" name='message' class="input-box" placeholder="Message" required></textarea>
+                                <button type="submit" name='submit' class="submit-btn">Send</button>
 
                                 <?php if ( !empty($_SESSION['form_message']['message']) ){ ?>
                                     <div class='<?=($_SESSION['form_message']['has_error']?'error':'success');?>-message'>
@@ -78,8 +78,8 @@
                                 <?php } ?>
                             </form>
                             
-                            <h2><a href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox?compose=new">Αποστολή με χρήση e-mail διεύθυνσης</a></h2>
-                            <br><br><br><a href="/">Επιστροφή στην αρχική</a>
+                            <h2><a href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox?compose=new">Send with email</a></h2>
+                            <br><br><br><a href="/">Return to home page</a>
                         </div>
                     </div>
                 </div>
@@ -87,7 +87,7 @@
         </section>
 
 		<div class="text-box">
-				<h1>Επικοινωνία</h1>
+				<h1>Contact</h1>
 		</div>
 
 		<?php require_once '_footer.php'; ?>
