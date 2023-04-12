@@ -5,7 +5,7 @@ error_reporting(E_ALL);
 
     define("SITE_NAME", "HomeWork");
 
-    $database = mysqli_connect("localhost", "your_username", "your_password", "database_name");
+    $database = mysqli_connect("", "", "", "");
     mysqli_query($database,"SET CHARACTER SET UTF8");
 
     if (!$database) 
