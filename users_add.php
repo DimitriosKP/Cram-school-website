@@ -1,134 +1,77 @@
 <?php
-session_start();
-
-include "config.php"; 
-
-$pageTitle = 'HomeWork - Add new student';
-require_once '_header.php';
+    require_once "config.php"; 
+    require_once "api/User.class.php";
+    $pageTitle = 'HomeWork - Add new student';
+    require_once '_header.php';
 ?>
+
     <body>
-        <?php
-            require_once '_menu.php';
-        ?>
+        <?php require_once '_menu.php'; ?>
 
         <div class="text-box">
-            <h1>Προσθέστε χρήστη</h1>
-            <p>Δώστε όνομα χρήστη, το email του και κωδικό πρόσβασης</p>
-        </div>
-<br><br>
+            <h1>Add new student</h1>
+            <p>Give a username, email and password</p>
+        </div><br><br>
 
-<section class="announcements">
-    <section class="cards-area" id="announcements-section" style='width:300px; margin: 0 auto'>
+        <section class="announcements">
+            <section class="cards-area" id="announcements-section" style='width:300px; margin: 0 auto'>
+                <form action="users_add.php" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="post_title">Username</label><br/>
+                        <input type="text" placeholder="Username" name="username" class="input-box" required>
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                        <label for="post_tags">Email</label><br/>
+                        <input type="email" placeholder="Email" name="email" class="input-box" required>
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                        <label for="post_tags">Password</label><br/>
+                        <input type="password" placeholder="Password" name="password" class="input-box" required>
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                        <label for="post_tags">Confirm password</label><br/>
+                        <input type="password" placeholder="Confirm password" name="cpassword" class="input-box" required>
+                    </div>
+                    <br />
+                    <button name="add" type='submit'>
+                        <i class="fa fa-plus" aria-hidden="true"></i>Add</button>
+                </form>
 
-        <!-- Χρειαζόμαστε τη φόρμα για να σταλούν τα δεδομένα στο users_add.php-->
-        <form action="users_add.php" method="post" enctype="multipart/form-data">
-
-            <div class="form-group">
-                <label for="post_title">Username: </label><br />
-                <input type="text" placeholder="Όνομα χρήστη" name="username" required>
-            </div>
-            <br/>
-
-            <div class="form-group">
-                <label for="post_tags">email: </label><br />
-                <input type="email" placeholder="Διεύθυνση Ηλ. ταχυδρομείου" name="email" required>
-            </div>
-            <br/>
-
-            <div class="form-group">
-                <label for="post_tags">password: </label><br />
-                <input type="password" placeholder="Κωδικός" name="password" required>
-            </div>
-            <br/>
-
-            <div class="form-group">
-                <label for="post_tags">email: </label><br />
-                <input type="password" placeholder="Επαλήθευση κωδικού" name="cpassword" required>
-            </div>
-            <br />
-
-            <!-- εδω ανεβάζουμε νέο αρχείο. δεν υπάρχει ακόμη id. θα δημιουργηθεί στην πορεία -->
-            <button name="add" type='submit' >
-                <i class="fa fa-plus" aria-hidden="true"></i> Add
-            </button>
-        </form>
-
-        <?php
-            if($_SERVER["REQUEST_METHOD"] == "POST"){
-                $_POST = array_map('trim', $_POST); 	# Θα τρέξει την συνάρτηση trim για όλα τα στοιχεία του πίνακα
-        
-                $email 		=  $_POST['email']??'';
-                $username 	=  $_POST['username']??'';
-                $password 	=  $_POST['password']??'';
-                $cpassword 	=  $_POST['cpassword']??'';
-                $role 		=  's';
+                <?php
+                    if($_SERVER["REQUEST_METHOD"] == "POST") {
+                        $_POST = array_map('trim', $_POST);
                 
-                
-                if (empty($email) || empty($username) || empty($password) || empty($cpassword)){
-                    echo "<script>alert('Fill all fields.')</script>";
-                }
-                else if ($password != $cpassword){
-                    echo "<script>alert('Passwords dont match.')</script>";
-                }
-                else{
-                    
-                    $sql = "SELECT *
-                            FROM `users`
-                            WHERE `email` = '%s' OR `username` = '%s'";
-        
-                    $sql = sprintf($sql,
-                            mysqli_real_escape_string($database, $email),
-                            mysqli_real_escape_string($database, $username),
-                    );			
-                    $res=mysqli_query($database, $sql);
-                    if (!$res) die(mysqli_error($database));
-        
-                    if (mysqli_num_rows($res)>0){
-                        $row = mysqli_fetch_assoc($res);
-        
-                        if ($row['email'] == $email){
-                            # email exists
-                            echo "<script>alert('Woops! The Email Already Exists.')</script>";
-                        }
-                        else if ($row['username'] == $username){
-                            # username exists
+                        $email 		=  $_POST['email']??'';
+                        $username 	=  $_POST['username']??'';
+                        $password 	=  $_POST['password']??'';
+                        $cpassword 	=  $_POST['cpassword']??'';
+                        $role 		=  's';
+                        
+                        $user = new User($_POST['username']??'', $_POST['email']??'', $_POST['password']??'', $_POST['cpassword']??'', $_POST['role']??'');
+                        
+                        if ($user->checkFields($email, $username, $password, $cpassword)) {
+                            echo "<script>alert('Fill all fields.')</script>";
+                        } else if (!$user->checkPassword($password, $cpassword)) {
+                            echo "<script>alert('Passwords dont match.')</script>";
+                        } else if ($user->checkUsername($username)) {
                             echo "<script>alert('Woops! The Username Already Exists.')</script>";
+                        } else if ($user->checkEmail($email)) {
+                            echo "<script>alert('Woops! The Email Already Exists.')</script>";
+                        } else {
+                            $user->save($username, $email, $password);
                         }
                     }
-                    else{
-                        $hash_password = password_hash($password, PASSWORD_DEFAULT);		# SOS για κρυπτογραφηση κωδικών στη βάση
-        
-                        if ($role === 's');
-        
-                        $sql = "INSERT INTO `users` (`username`, `email`, `password`, `role`) VALUES('%s', '%s', '%s', '%s');";
-                        $sql = sprintf($sql, 
-                                    mysqli_real_escape_string($database, $username),
-                                    mysqli_real_escape_string($database, $email),
-                                    mysqli_real_escape_string($database, $hash_password),
-                                    $role
-                                );
-                        #	die($sql);
-                        if (mysqli_query($database, $sql)){
-                            echo "<script>
-                                    if (alert('Registration successful')){
-                                        window.location='login.php';
-                                    }
-                                    </script>";
-                        }
-        
-                    }
-                }
-            }
-        
-        ?>
-        
+                ?>
+        </section>
     </section>
-</section>
-<br><br>
+    <br><br>
 
-<?php require_once '_footer.php'; ?>
-<!---------JavaScript--------->
-<script src="JavaScript.js"></script>
+    <?php require_once '_footer.php'; ?>
+    <!---------JavaScript--------->
+    <script src="JavaScript.js"></script>
 
     </body>
 </html>

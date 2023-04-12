@@ -1,15 +1,13 @@
 <?php 
-
     //$id=(int)$_GET['id'];
     $name=$_GET['file'];
 
-    if(!empty($name))
-    {
+    if(!empty($name)) {
         $filename = basename($name);
         $filepath = '/upload_homeworks/'.$filename;
-        if(!empty($filename)){
-
-    //Define Headers
+        
+        if(!empty($filename)) {
+            //Define Headers
             header("Cache-Control: public");
             header("Content-Description: File Transfer");
             header("Content-Disposition: attachment; filename=$filename");
@@ -18,10 +16,8 @@
 
             readfile($filepath);
             exit;
+        } else {
+            echo "This file does not exist.";
         }
-        else{
-            echo "This File Does not exist.";
-        }
-        
     }
     header('Location: homeworks.php');

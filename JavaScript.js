@@ -1,22 +1,16 @@
 var navLinks = document.getElementById("navLinks");
-function showMenu()
-{
+function showMenu() {
     navLinks.style.right = "0";
 }
-function hideMenu()
-{
+function hideMenu() {
     navLinks.style.right = "-200px";
 }
 const toTop = document.querySelector(".topBtn");
 
-window.addEventListener("scroll", () => 
-{
-    if (window.pageYOffset > 100)
-    {
+window.addEventListener("scroll", () => {
+    if (window.pageYOffset > 100) {
         toTop.classList.add("active");
-    }
-    else 
-    {
+    } else {
         toTop.classList.remove("active");
     }
 })   

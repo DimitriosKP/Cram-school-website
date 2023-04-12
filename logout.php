@@ -1,8 +1,5 @@
 <?php 
-
-session_start();
-session_destroy();
-
-header("Location: opening.php");
-
+    session_start();
+    session_destroy();
+    header("Location: opening.php");
 ?>

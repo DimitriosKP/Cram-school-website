@@ -1,52 +1,29 @@
 <?php 
-    
-    session_start();
+    require_once "config.php";
 
-    if (!isset($_SESSION['id']) || $_SESSION['id'] <=0 ){
+    // Check if the user is logged in, if not then redirect him to login page
+    if (!isset($_SESSION['id']) || $_SESSION['id'] <= 0 ){
         header('Location: login.php');
         die();
     }
 
-    require_once 'config.php';
-    /*echo '<pre>';
-    echo 'Τα  δεδομένα απ τα πεδια της φορμας<br />';
-    print_r($_POST);
-    echo '<br /><br />Το αρχειο<br />';
-    print_r($_FILES);*/
-    
-
-
-    # Εδω πρέπει να γίνουν οι έλεγχοι πριν κάνουμε κάτι με το αρχείο...
-    # ελεγχουμε αν εχουν σταλεί ολα τα δεδομένα απ τον χρηστη
-    if (! isset($_FILES['user_file'])) {
-        # δεν υπάρχει αρχείο; έξοδος
-        header('Location: documents.php');
-        die();
-    }
-    else if (! isset($_POST['title'])) {
-        # δεν έβαλε τίτλο; έξοδος
-        header('Location: documents.php');
-        die();
-    }
-    else if (! isset($_POST['description'])) {
-        # δεν έβαλε περιγραφή; έξοδος
+    # Check if all data has been sent by the user
+    if (!isset($_FILES['user_file']) || !isset($_POST['title']) || !isset($_POST['description'])) {    // if there is no file, title or description, exit
         header('Location: documents.php');
         die();
     }
 
-    # Βλέπουμε αν ειναι οκ το μέγεθος
+    # Check the size of the file
     $ONE_MB = 1024*1024;
 
-    if ($_FILES['user_file']['size'] > $ONE_MB*30){
-         # πολύ μεγάλο αρχείο; έξοδος
+    if ($_FILES['user_file']['size'] > $ONE_MB*30) {    # Ιf it is a large file, exit
          header('Location: documents.php');
          die();
     }
 
-    # παίρνουμε το extension του αρχείου που ανεβηκε
+    # Check the file extension
     $extension = pathinfo($_FILES['user_file']['name'], PATHINFO_EXTENSION);
 
-    # Βλέπουμε αν ειναι οκ ο τύπος
     $allowed_filetypes=[
        'zip',
        'pdf',
@@ -57,96 +34,54 @@
        'txt',
     ];
 
-    if (!in_array($extension, $allowed_filetypes)){
-         # μη επιτρεπόμενος τυπος; έξοδος
-         header('Location: documents.php');
-         die();
+    if (!in_array($extension, $allowed_filetypes)) { # Ιf it is a wrong type, exit
+        header('Location: documents.php');
+        die();
     }
 
-
-    # για έξτρα ασφάλεια ελεγχουμε το όνομα του αρχείου μην περιέχει περιεργους χαρακτηρες που μπορεί να κανουν ζημια στον σερβερ.
-    # πχ αντικαθιστουμε όλους τους μη αλφαριθμητικους χαρακτήρες με μια κατω παυλα
-
+    # Replace all non-alphanumeric characters with an underscore
     $filename = greeklish($_FILES['user_file']['name']);
-    $filename_chars = str_split($filename, 1); # θα σπασει το string σε ενα πινακα με τους χαρακτήρες ανα 1 χαρακτήρα.
+    $filename_chars = str_split($filename, 1); # Will break the string into an array of characters 1 character at a time.
     
-    for($i=0; $i<strlen($filename); $i++){
-        # στα linux αν ο χρήστης ανεβάσει ενα αρχείο με όνομα  ../file.zip  και εμεις παμε να το αποθηκεύσουμε στον φάκελο uploads
-        # θα εχουμε την εξης διαδρομη:  uploads/../file.zip  Aυτο ειναι στην ουσια έξω από τον φάκελο uploads
-
-        # μονο οι παρακάτω χαρακτηρες επιτρέπονται στο ονομα αρχειου:
+    for($i=0; $i<strlen($filename); $i++) {
+        # only the following characters are allowed in the file name:
         $allowd_chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-.'; 
-        $allowd_chars = str_split( $allowd_chars, 1); # θα σπασει το string σε ενα πινακα με τους χαρακτήρες ανα 1 χαρακτήρα
+        $allowd_chars = str_split( $allowd_chars, 1); # Will break the string into an array of characters 1 character at a time.
         
-        if (!in_array($filename[$i], $allowd_chars)){
+        if (!in_array($filename[$i], $allowd_chars)) {
             $filename = str_replace($filename[$i], '_', $filename);
         }
     }
 
-    // print($filename );die();
-
-    ## ώρα να μεταφέρουμε το αρχειο στον φακελό μας
-    ## __DIR__ ειναι ο φάκελος όπου βρίσκεται το αρχείο php οπου τρέχει το script μας
+    ## Move the file to our folder
+    ## __DIR__ is the folder where the php file where our script runs is located
     
-    if (!file_exists(__DIR__.'/upload_documents/')){ # αν δεν υπάρχει... 
+    if (!file_exists(__DIR__.'/upload_documents/')) {
         mkdir(__DIR__.'/upload_documents/');
     }
 
-    # βλέπουμε μηπως υπάρχει αρχειο με ιδιο ονομα. οποτε πρεπει να αλλαξουμε το όνομα στο νεο αρχειο για να μην πετάξει σφαλμα
-    # μπορούμε να το διαγράψουμε επισης αν δεν μας νοιαζει.. 
-
-    # για διαγραφή: 
-    # unlink(__DIR__.'/uploads/' . $filename);
-
-    # αλλιως βαζουμε ενα ραντομ στην αρχή του ονοματος
+    # We see if there is a file with the same name. so we have to change the name in the new file. 
+    # We put a random character at the beginning of the name
     $filename = rand(1000,9999).'_'.$filename;
 
-    move_uploaded_file($_FILES['user_file']['tmp_name'], __DIR__.'/upload_documents/' . $filename); ##  $filename το ασφαλές ονομα που ετοιμάσαμε για το αρχειο μας
+    move_uploaded_file($_FILES['user_file']['tmp_name'], __DIR__.'/upload_documents/' . $filename);
     
-    # τελος ενημερωνουμε τη βάση με 
+    # We update the database
     # $title, $description, #filename, date , creator_id
-    # στον πινακα uploads το file_id πρπει να ειναι primary_key και auto increament
+    # in the uploads table the file_id must be primary key and auto increment
 
-    $sql = "INSERT INTO upload_documents (`file_name`, `file_description`, `file_type`, `file_uploaded_on`, `file`, `creator_id`)  
-            VALUES ('%s', '%s', '%s', NOW(), '%s', %d)";
+    $stmt = $pdo->prepare("INSERT INTO upload_documents (file_name, file_description, file_type, file_uploaded_on, file, creator_id) 
+                                VALUES (?, ?, ?, NOW(), ?, ?)");
 
-    $sql = sprintf($sql,
-                mysqli_real_escape_string($database, $_POST['title']),
-                mysqli_real_escape_string($database, $_POST['description']),
-                mysqli_real_escape_string($database, $extension),
-                mysqli_real_escape_string($database, '/upload_documents/'.$filename),
-                $_SESSION['id']
-            );
-
-    mysqli_query($database, $sql);
-    /*
-    if (isset($_GET['upload'])) 
-    {
-        $file_name = $_FILES['file_name'];
-        $file_description = $_FILES['file_description'];
-        $file_type = $_FILES['file_type'];
-        $file = $_FILES['file'];
-        $upload_folder="/uploads/";
-
-        $movefile = move_uploaded_file($_FILES['user_file']['tmp_name'], 'uploads' .$file_name);
-
-        if($move_uploaded_file){
-            echo "File uploaded succesfully";
-        }
-
-        $sql="INSERT INTO uploads (file_name,file_description,file_type,file) VALUES('$file_name','$file_description','$file_type','$file')";
-        mysqli_query($conn,$sql);
-        if (mysqli_query($conn, $sql)) 
-        {
-            echo "New file uploaded successfully";
-        } else 
-        {
-            echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-        }       
-    }
-    */
+    $stmt->execute([
+        $_POST['title'],
+        $_POST['description'],
+        $extension,
+        '/upload_documents/'.$filename,
+        $_SESSION['id']
+    ]);
+        
     header('Location: documents.php');
-    
 
     function greeklish($str) {
         $greek = array('α','ά','Ά','Α','β','Β','γ','Γ','δ','Δ','ε','έ','Ε','Έ','ζ','Ζ','η','ή','Η','θ','Θ',

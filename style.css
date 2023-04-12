@@ -410,8 +410,7 @@ nav .fa{
     background-color: #062131;
     border: 1px solid rgb(146, 146, 146);
     margin: 15px 0;
-    height: 40px;
-    border-radius: 20px;
+    border-radius: 5px;
     padding: 0 10px;
     box-sizing: border-box;
     outline: none;
@@ -420,6 +419,7 @@ nav .fa{
     font-weight: 400;
     font-size: 16px;
     text-align: start;
+    height: 40px;
 }
   
 .input-box:focus {

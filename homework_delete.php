@@ -1,25 +1,24 @@
 <?php 
+    require_once "config.php";
     
-    session_start();
-
-    # $_SESSION['id'] : ορίζεται μονο οταν κανει login ο χρηστης και περιέχει το userid του
-    if (!isset($_SESSION['id']) || $_SESSION['id'] <=0 ){
+    // Check if the user is logged in, if not then redirect him to login page
+    if (!isset($_SESSION['id']) || $_SESSION['id'] <= 0 ){
         header('Location: login.php');
         die();
     }
 
-    require_once "config.php";
     $id=(int)$_GET['id'];
 
-    # μπορεί να διαγραψει μόνο ο tutor
+    // Only the tutor can delete homeworks
     if(isset($_GET['id']) && $_SESSION["role"] === 't'){
-        $sql = "DELETE 
-                FROM upload_homeworks 
+        $sql = "DELETE FROM upload_homeworks 
                 WHERE file_id = ".intval($_GET['id'])." 
                     AND creator_id = ".$_SESSION['id']; 
         
-        mysqli_query($database, $sql)  ;
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":file_id", $id, PDO::PARAM_INT);
+        $stmt->bindParam(":creator_id", $_SESSION['id'], PDO::PARAM_INT);
+        $stmt->execute();
     }
 
     header('Location: homework.php');
-    

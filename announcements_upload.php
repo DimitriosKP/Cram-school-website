@@ -1,49 +1,34 @@
-<?php 
-    
-    session_start();
-    require_once 'config.php';
+<?php
+    require_once "config.php";
 
-    if (!isset($_SESSION['id']) || $_SESSION['id'] <=0 ){
-        header('Location: login.php');
-        die();
+    // Check if the user is logged in, if not then redirect him to login page
+    if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+        $_SESSION['username'] = $username;
+        header("location: login.php");
+        exit;
     }
 
-    /*echo '<pre>';
-    echo 'Τα  δεδομένα απ τα πεδια της φορμας<br />';
-    print_r($_POST);
-    echo '<br /><br />Το αρχειο<br />';
-    print_r($_FILES);*/
-    
-
-    # Εδω πρέπει να γίνουν οι έλεγχοι πριν κάνουμε κάτι με το αρχείο...
-
-    # ελεγχουμε αν εχουν σταλεί ολα τα δεδομένα απ τον χρηστη
-    if (! isset($_POST['title'])) {
-        # δεν έβαλε τίτλο; έξοδος
+    # We check if all data has been sent by the user
+    if (!isset($_POST['title']) || !isset($_POST['text'])) {
         header('Location: announcements.php');
-        die();
-    }
-    else if (! isset($_POST['text'])) {
-        # δεν έβαλε κείμενο; έξοδος
-        header('Location: announcements.php');
-        die();
+        exit();
     }
 
-
-    # ενημερωνουμε τη βάση με 
+    $title = $_POST['title'];
+    $text = $_POST['text'];
+    $creator_id = $_SESSION['id'];
+    
+    # We update the database
     # $title, $text, date , creator_id
-    # στον πινακα announcements το ann_id πρέπει να ειναι primary_key και auto increament
-
+    # in the announcements table ann_id must be primary_key and auto increment
     $sql = "INSERT INTO announcements (`ann_title`, `ann_uploaded_on`, `ann_text`, `creator_id`)  
-            VALUES ('%s', NOW(), '%s', '%d')";
+    VALUES (:title, NOW(), :text, :creator_id)";
 
-    $sql = sprintf($sql,
-                mysqli_real_escape_string($database, $_POST['title']),
-                mysqli_real_escape_string($database, $_POST['text']),
-                $_SESSION['id']
-            );
-
-    mysqli_query($database, $sql);
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':title', $title);
+    $stmt->bindParam(':text', $text);
+    $stmt->bindParam(':creator_id', $creator_id);
+    $stmt->execute();
 
     header('Location: announcements.php');
 
@@ -51,11 +36,10 @@
         $greek = array('α','ά','Ά','Α','β','Β','γ','Γ','δ','Δ','ε','έ','Ε','Έ','ζ','Ζ','η','ή','Η','θ','Θ',
         'ι','ί','ϊ','ΐ','Ι','Ί','κ','Κ','λ','Λ','μ','Μ','ν','Ν','ξ','Ξ','ο','ό','Ο','Ό','π','Π','ρ','Ρ','σ',
         'ς','Σ','τ','Τ','υ','ύ','Υ','Ύ','φ','Φ','χ','Χ','ψ','Ψ','ω','ώ','Ω','Ώ');
-        
+
         $english = array('a', 'a','A','A','b','B','g','G','d','D','e','e','E','E','z','Z','i','i','I','th','Th',
         'i','i','i','i','I','I','k','K','l','L','m','M','n','N','x','X','o','o','O','O','p','P' ,'r','R','s',
         's','S','t','T','u','u','Y','Y','f','F','x','X','ps','Ps','o','o','O','O');
 
-        
         return str_replace($greek, $english, $str);
     }
